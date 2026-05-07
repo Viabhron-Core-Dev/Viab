@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Nexus</string>
+    <string name="accessibility_description">Enables Nexus to perform system actions like screen lock, screenshots, and gesture navigation from the sidebar.</string>
+</resources>

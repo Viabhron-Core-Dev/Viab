@@ -1,0 +1,6 @@
+{
+  "name": "Nexus Hybrid Launcher",
+  "description": "High-fidelity prototype of a lightweight Android launcher with persistent sidebar, wiggle-edit mode, and system monitoring.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
