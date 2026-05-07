@@ -57,6 +57,25 @@
                 android:resource="@xml/accessibility_service_config" />
         </service>
 
+        <!-- Call Recording Service -->
+        <service android:name=".services.CallRecordingService" />
+
+        <!-- Broadcast Receivers -->
+        <receiver android:name=".receivers.CallReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".receivers.PackageReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                <action android:name="android.intent.action.PACKAGE_REPLACED" />
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>
