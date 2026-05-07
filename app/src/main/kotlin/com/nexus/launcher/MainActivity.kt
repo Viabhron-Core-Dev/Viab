@@ -8,14 +8,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.nexus.launcher.services.NexusCoreService
 import com.nexus.launcher.ui.adapters.LauncherAdapter
 import com.nexus.launcher.logic.AppLoader
+import com.nexus.launcher.sidebar.HandleManager
 
 class MainActivity : AppCompatActivity() {
     
     private lateinit var workspace: RecyclerView
+    private lateinit var handleManager: HandleManager
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        handleManager = HandleManager(this)
+        handleManager.isEnabled = true
         
         // Start the persistence core immediately
         val serviceIntent = Intent(this, NexusCoreService::class.java)
