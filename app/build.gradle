@@ -41,6 +41,7 @@ dependencies {
     
     // Low-end optimizations
     implementation 'androidx.recyclerview:recyclerview:1.3.2'
+    implementation 'androidx.cardview:cardview:1.0.0'
     
     // Sidebar Base (As requested)
     implementation 'com.github.michael-rapp:android-sidebar:3.0.0'

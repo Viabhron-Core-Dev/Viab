@@ -1,107 +1,74 @@
-# Android Hybrid Launcher Blueprint: Project "Nexus"
+# Nexus Hybrid Launcher: Full Native Production Blueprint
 
-## 1. Project Vision
-A ultra-customizable Android environment combining **Lawnchair's** desktop aesthetics with the persistent, multi-layered utility of **Everywhere Launcher** and **NetSpeed Indicator**.
-
----
-
-## 2. Core Architecture
-
-### A. Desktop Engine (Nova/Lawnchair Style)
-*   **Homescreen**: 
-    *   **Grid System**: Flexible nxm grid with sub-grid positioning.
-    *   **Clock Widget**: A specialized `RemoteViews` implementation synced to `java.util.Calendar` or `Instant` with custom font support.
-    *   **Dock**: A separate `paged` or `static` dock container with blur background support.
-    *   **Gestures**: Intercepts `onSingleTap`, `onDoubleTap`, and `onFling` on the workspace background (e.g., Double tap to sleep via Accessibility API).
-*   **App Drawer**:
-    *   **Folders**: Tabbed or grouped app drawer entries.
-    *   **Search Bar**: Integrated `EditText` with fuzzy search; option to auto-hide when scrolling.
-    *   **Sorting**: Alphabetical, Install Date, or Frequency of Use.
-
-### B. Handle & Gesture Manager (Everywhere Launcher Logic)
-*   **The Handle Service**: 
-    *   Uses `WindowManager` overlays.
-    *   **Configurations**: Thickness (dp), Position (Y-axis), Transparency (Alpha), and Color.
-    *   **Gesture Mapping**: 
-        *   `Single Tap`: Toggle Volume/Ringer.
-        *   `Double Tap`: Open specific App (e.g., NetSpeed).
-        *   `Swipe Up/Down`: Lock Screen / Expand Notifications.
-        *   `Long Press`: Enter Edit Mode.
-
-### C. The Pro Sidebar (Slide-out Overlay)
-*   **Elements (Multi-Page)**:
-    1.  **Apps/Shortcuts**: Direct intent launches.
-    2.  **Widgets**: Scaled widget hosts within the sidebar.
-    3.  **Folders**: 
-        *   Styles: First-icon preview, Grid-of-4, or custom Slidestyle.
-    4.  **Android Actions**: 
-        *   **Volume Control**: Horizontal sliders for Ringer, Media, and Alarm.
-        *   **Brightness**: Step-based or slider-based brightness override.
-        *   **Orientation**: Toggle for Auto-rotate lock.
-        *   **Screenshot**: Triggers `MediaProjection` or `Accessibility` screenshot action.
-*   **UX Controls (Based on User Images)**:
-    *   **Stick Mode**: Snap to Bottom/Right or Center/Right.
-    *   **Length Mode**: "Wrap Content" (sidebar height matches items) vs "Full Screen".
-    *   **Auto-Close**: Configurable timeout (default 5000ms).
-    *   **Icon Styles**: Circle, Square, Squircle with custom tinting (Image Color).
+## 1. Project Status Summary
+*   **Target Device**: Low-end Android (3GB RAM).
+*   **Architecture**: Native Kotlin + Gradle + SQLite (No heavy dependencies).
+*   **Current Progress**: **~35%** (Core engine skeleton and system services bootstrapped).
 
 ---
 
-## 3. High-Performance Feature Set
+## 2. Implemented Components (Current Progress)
 
-### A. Call Recording (The "CallU" Bridge)
-*   **Trigger**: Background `PhoneStateListener` detects incoming/outgoing calls.
-*   **Logic**: 
-    1.  Starts a background `AudioRecord` pipe.
-    2.  Attempts `VOICE_CALL` source.
-    3.  **Fallback**: If restricted by Android 10+, uses **Accessibility Service** audio intake.
-*   **Storage**: Lightweight `.amr` encoding to minimize I/O and storage pressure.
+### A. Infrastructure & CI/CD
+*   [x] **Build System**: Gradle 8.2 + Kotlin DSL setup.
+*   [x] **GitHub Actions**: Automated `.apk` build workflow in `.github/workflows/android.yml`.
+*   [x] **Manifest**: Permission mapping (System Overlay, Accessibility, Record Audio).
 
-### B. "Wiggle" Edit Mode (Identity UX)
-*   **Trigger**: Long-press (500ms) on any element (Homescreen or Sidebar).
-*   **Visuals**: 
-    *   **Scale**: 0.95x.
-    *   **Animation**: 20Hz rotation oscillation (-1deg to 1deg).
-*   **Behavior**: 
-    *   In **Launcher**: Items snap to grid; dropping on another item creates a **Folder**.
-    *   In **Sidebar**: Items swap positions using `ItemTouchHelper`. Dragging to top/bottom "Trash Zone" removes it.
-    *   **Folders**: Supports icons previews (First-in-folder, Grid, or Slider).
+### B. Persistence & Monitoring (The "Always-On" Layer)
+*   [x] **NexusCoreService**: Foreground service with NetSpeed logic (`TrafficStats`).
+*   [x] **NexusAccessibilityService**: Global actions (Sleep, Screenshot, Notifications).
+*   [x] **SQLite Database**: Schema for workspace layout and sidebar state.
+*   [x] **CallRecordingService**: AMR-compliant voice capture engine.
 
-### C. System Performance (3GB RAM Optimization)
-*   **Persistence**: Uses a **Foreground Service** with a permanent notification to prevent the system from killing the app process.
-*   **Accessibility Shield**: Provides a "Quick Reset" toggle in the sidebar that jumps to Android Accessibility settings if the service becomes unresponsive.
-*   **Optimization**: 
-    *   **Icon Downsampling**: Renders all icons at a fixed 48dp to save VRAM.
-    *   **Zero-Blur Mode**: Detects low system resources and switches to flat backgrounds to reduce GPU overdraw.
+### C. Launcher UI Skeleton
+*   [x] **Workspace**: Paged layout container with "Wiggle" logic.
+*   [x] **App Drawer**: `AppLoader` scanning for system activities + Search logic.
+*   [x] **Adapters**: Unified `LauncherAdapter` supporting drag/drop visuals.
+*   [x] **Sidebar**: `HandleManager` for multiple edge triggers.
 
 ---
 
-## 4. Permission Requirements (Mandatory)
-*   **System Alert Window**: For Sidebar/Handles/NetSpeed.
-*   **Accessibility Service**: For Screen Lock, Screenshot, and Call Audio Fallback.
-*   **Record Audio & Phone State**: For Call Recording.
-*   **Modify System Settings**: For Brightness/Timeout control.
-*   **Query All Packages**: To populate the app drawer.
+## 3. The Roadmap to 100+ Files (Full Depth)
+
+To compete with Launchair/Nova, the following sub-packages must be built:
+
+### A. Widget Hosting (Complex Layer)
+*   [ ] `logic/WidgetHostManager.kt`: Handling `AppWidgetHost` callbacks.
+*   [ ] `ui/WidgetContainer.kt`: Dynamic resizing of widgets on the grid.
+*   [ ] `data/WidgetInfo.kt`: Persistence of widget positioning.
+
+### B. Gesture & Input Engine
+*   [ ] `logic/GestureDetector.kt`: Custom listeners for Swipe Up, Pinch, and Two-finger rotations.
+*   [ ] `logic/HapticManager.kt`: Optimized vibration feedback profiles for high-end feel.
+
+### C. The Pro Sidebar (Actions & Sliders)
+*   [ ] `ui/sliders/VolumeSlider.kt`: Custom View for Media/Ringer control.
+*   [ ] `ui/sliders/BrightnessSlider.kt`: System brightness override logic.
+*   [ ] `logic/ShortcutManager.kt`: Support for deep-linking into app actions (e.g., Open New Tab in Chrome).
+
+### D. Deep Performance Tuning
+*   [ ] `logic/MemoryGuard.kt`: Background task that kills non-essential Nexus threads when system RAM is <200MB.
+*   [ ] `logic/Caching/IconCache.kt`: Disk-based LRU cache to prevent icon reload lag.
 
 ---
 
-## 5. Development Strategy (Phase-by-Phase)
+## 4. File Structure Visualization
 
-1.  **Skeleton**: Launcher3 base with dock/widget support.
-2.  **Handles**: Background overlay service for the high-customizable edge triggers.
-3.  **Actions**: Implementation of Volume, Brightness, and System sliders.
-4.  **Edit Mode**: Finalize the "Wiggle" drag logic.
-5.  **Persistence**: Fine-tune the foreground service to ensure 99% uptime on low-RAM devices.
+```text
+app/src/main/kotlin/com/nexus/launcher/
+├── data/           # NexusItem, WidgetInfo, FolderInfo (10+ files)
+├── db/             # NexusDatabase, ItemDao, SettingsProvider (5+ files)
+├── drawer/         # Search, AlphabeticalScroller, Tabs (15+ files)
+├── logic/          # AppLoader, ActionHandler, IconCache, Gestures (30+ files)
+├── overlay/        # Handles, SidebarController, TrashZone (15+ files)
+├── receivers/      # Call, Package, Boot, Power (8+ files)
+├── services/       # Core, Accessibility, Recorder, Monitor (10+ files)
+└── ui/             # Workspace, Hotseat, DragLayer, Folders (20+ files)
+```
 
 ---
 
-## 6. Comparison Chart: Key Features vs Reference Repos
-
-| Requirement | implementation Source | Logic Refinement |
-| :--- | :--- | :--- |
-| **App Drawer Folders** | [Lawnchair](https://github.com/LawnchairLauncher/Lawnchair) | Use their `FolderIcon` and `FolderInfo` classes. |
-| **Multi-Action Handles** | [Everywhere Launcher](https://github.com/michael-rapp/AndroidSidebar) | Extend with `ActionHandler` for volume/toggles. |
-| **System Sliders** | Custom Development | Use `AudioManager` and `Settings.System`. |
-| **Sleep/Screenshot** | [SideActions](https://github.com/MuntashirAkon/AppManager) | Accessibility Service events. |
-| **Call Recording** | Custom Engine | `AudioRecord` with Accessibility fallback. |
-| **NetSpeed Strip** | [Internet-Speed](https://github.com/deepak140596/Internet-Speed) | Status bar overlay via `WindowManager`. |
+## 5. Next Critical Steps
+1.  **Icon Pack Integration**: Implement a parser for standard icon packs from the Play Store.
+2.  **Handoff Logic**: Finalize the "Wiggle" transition where a long-pressed Sidebar item can be dropped onto the Homescreen.
+3.  **WhatsApp Hook**: Research `NotificationListenerService` to detect active WhatsApp VOIP calls for the call recorder.

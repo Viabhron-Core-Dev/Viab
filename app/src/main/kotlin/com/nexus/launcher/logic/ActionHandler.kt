@@ -1,6 +1,7 @@
 package com.nexus.launcher.logic
 
 import android.content.Context
+import android.content.Intent
 import android.media.AudioManager
 import android.provider.Settings
 import com.nexus.launcher.data.NexusItem

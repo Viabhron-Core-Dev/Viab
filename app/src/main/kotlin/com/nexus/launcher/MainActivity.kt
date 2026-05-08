@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         workspace.adapter = LauncherAdapter(apps, { item ->
             // Launch activity
             val intent = packageManager.getLaunchIntentForPackage(item.packageName!!)
-            startActivity(intent)
+            intent?.let { startActivity(it) }
         }, { item, view ->
             // Enter edit mode
             (workspace.adapter as LauncherAdapter).setEditMode(true)
