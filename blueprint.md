@@ -3,15 +3,15 @@
 ## 1. Project Status Summary
 *   **Target Device**: Low-end Android (3GB RAM).
 *   **Architecture**: Native Kotlin + Gradle + SQLite (No heavy dependencies).
-*   **Current Progress**: **~35%** (Core engine skeleton and system services bootstrapped).
+*   **Current Progress**: **~40%** (CI/CD debugging in progress, core services bootstrapped).
 
 ---
 
 ## 2. Implemented Components (Current Progress)
 
 ### A. Infrastructure & CI/CD
-*   [x] **Build System**: Gradle 8.2 + Kotlin DSL setup.
-*   [x] **GitHub Actions**: Automated `.apk` build workflow in `.github/workflows/android.yml`.
+*   [ ] **Build System**: Gradle 8.2 + Kotlin DSL setup (Fixing repository conflicts).
+*   [ ] **GitHub Actions**: Automated `.apk` build workflow (Debugging wrapper/jar issues).
 *   [x] **Manifest**: Permission mapping (System Overlay, Accessibility, Record Audio).
 
 ### B. Persistence & Monitoring (The "Always-On" Layer)
