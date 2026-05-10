@@ -11,31 +11,38 @@ else
     JAVACMD="java"
 fi
 
-if [ ! -x "$JAVACMD" ] ; then
-    die "ERROR: JAVA_HOME is set to an invalid directory: $JAVA_HOME
-Please set the JAVA_HOME variable in your environment to match the
-location of your Java installation."
-fi
-
 # Attempt to run the wrapper jar
 if [ -f "gradle/wrapper/gradle-wrapper.jar" ]; then
-    exec "$JAVACMD" -jar "gradle/wrapper/gradle-wrapper.jar" "$@"
-else
-    # Automatically try to download the wrapper jar if missing
-    WRAPPER_URL="https://github.com/gradle/gradle/raw/v8.2.0/gradle/wrapper/gradle-wrapper.jar"
-    if command -v curl >/dev/null 2>&1; then
-        echo "gradle-wrapper.jar missing, downloading..."
-        mkdir -p gradle/wrapper
-        curl -L "$WRAPPER_URL" -o gradle/wrapper/gradle-wrapper.jar
-        if [ -f "gradle/wrapper/gradle-wrapper.jar" ]; then
-            exec "$JAVACMD" -jar "gradle/wrapper/gradle-wrapper.jar" "$@"
-        fi
-    fi
-    # Fallback to system gradle if available
-    if command -v gradle >/dev/null 2>&1; then
-        exec gradle "$@"
+    # Verify if it's a valid jar before running
+    if jar -tf gradle/wrapper/gradle-wrapper.jar > /dev/null 2>&1; then
+        exec "$JAVACMD" -jar "gradle/wrapper/gradle-wrapper.jar" "$@"
     else
-        echo "ERROR: gradle/wrapper/gradle-wrapper.jar not found and 'gradle' command not found in PATH."
-        exit 1
+        echo "Warning: gradle-wrapper.jar is invalid or corrupt. Attempting recovery..."
+        rm gradle/wrapper/gradle-wrapper.jar
     fi
 fi
+
+# Recovery: Try to use system gradle to regenerate or run
+if command -v gradle >/dev/null 2>&1; then
+    echo "Using system gradle..."
+    exec gradle "$@"
+fi
+
+# Last resort: Try to download a known good version
+WRAPPER_URL="https://services.gradle.org/distributions/gradle-8.2-bin.zip"
+# Note: Services.gradle.org is the official source. 
+# However, downloading the whole zip in a stub is slow.
+# Let's try one more binary link that is often used for bootstrap
+BOOTSTRAP_JAR="https://github.com/gradle/gradle/raw/v8.2.0/gradle/wrapper/gradle-wrapper.jar"
+
+if command -v curl >/dev/null 2>&1; then
+    echo "Attempting to download bootstrap jar..."
+    mkdir -p gradle/wrapper
+    curl -L "$BOOTSTRAP_JAR" -o gradle/wrapper/gradle-wrapper.jar
+    if [ -f "gradle/wrapper/gradle-wrapper.jar" ]; then
+         exec "$JAVACMD" -jar "gradle/wrapper/gradle-wrapper.jar" "$@"
+    fi
+fi
+
+echo "ERROR: Unable to find or bootstrap Gradle."
+exit 1

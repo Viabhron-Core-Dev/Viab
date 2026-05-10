@@ -10,8 +10,8 @@
 ## 2. Implemented Components (Current Progress)
 
 ### A. Infrastructure & CI/CD
-*   [ ] **Build System**: Gradle 8.2 + Kotlin DSL setup (Fixing repository conflicts).
-*   [ ] **GitHub Actions**: Automated `.apk` build workflow (Debugging wrapper/jar issues).
+*   [x] **Build System**: Gradle 8.2 + Kotlin DSL setup (Transitioned to system Gradle for CI stability).
+*   [x] **GitHub Actions**: Automated `.apk` build workflow (Optimized to use runner-provided Gradle).
 *   [x] **Manifest**: Permission mapping (System Overlay, Accessibility, Record Audio).
 
 ### B. Persistence & Monitoring (The "Always-On" Layer)
