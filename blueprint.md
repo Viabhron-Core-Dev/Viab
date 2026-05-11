@@ -1,74 +1,88 @@
-# Nexus Hybrid Launcher: Full Native Production Blueprint
+# Nexus Hybrid Launcher: Technical Blueprint & Roadmap
 
-## 1. Project Status Summary
-*   **Target Device**: Low-end Android (3GB RAM).
-*   **Architecture**: Native Kotlin + Gradle + SQLite (No heavy dependencies).
-*   **Current Progress**: **~40%** (CI/CD debugging in progress, core services bootstrapped).
+## 🎯 Project Vision
+A production-grade, low-footprint Android launcher (3GB RAM target) featuring a hybrid workspace, a persistent action-sidebar, and integrated system utilities (call recording, net-speed monitoring).
 
 ---
 
-## 2. Implemented Components (Current Progress)
+## 🏗️ Development Phases
 
-### A. Infrastructure & CI/CD
-*   [x] **Build System**: Gradle 8.2 + Kotlin DSL setup (Transitioned to system Gradle for CI stability).
-*   [x] **GitHub Actions**: Automated `.apk` build workflow (Optimized to use runner-provided Gradle).
-*   [x] **Manifest**: Permission mapping (System Overlay, Accessibility, Record Audio).
+### Phase 1: Infrastructure & Core Engine [IN PROGRESS]
+*   **Goal**: Establish a stable build environment, CI/CD, and the "Always-On" system layer.
+*   [x] **Build System**: Gradle 8.2 + Kotlin DSL. (Note: Using system Gradle in CI for stability).
+*   [x] **CI/CD**: GitHub Actions for automated `.apk` generation.
+*   [x] **Manifest & Permissions**: Deep-level permissions (Accessibility, Overlays, Storage).
+*   [x] **Service Layer**: 
+    *   `NexusCoreService`: Traffic monitoring & memory oversight.
+    *   `NexusAccessibilityService`: Handles global UI actions.
+    *   `CallRecordingService`: Voice capture logic.
 
-### B. Persistence & Monitoring (The "Always-On" Layer)
-*   [x] **NexusCoreService**: Foreground service with NetSpeed logic (`TrafficStats`).
-*   [x] **NexusAccessibilityService**: Global actions (Sleep, Screenshot, Notifications).
-*   [x] **SQLite Database**: Schema for workspace layout and sidebar state.
-*   [x] **CallRecordingService**: AMR-compliant voice capture engine.
+### Phase 2: Workspace & Layout Logic [PENDING]
+*   **Goal**: The main UI interactions: Drag-and-drop, grid calculations, and paged workspace.
+*   [x] **Basic Workspace**: Paged container.
+*   [ ] **Wiggle Mode**: Logic for long-press induced edit states.
+*   [ ] **Widget Hosting**: Implementing `AppWidgetHost`.
+*   [ ] **Icon Pack Parser**: Compatibility with standard icon packs.
 
-### C. Launcher UI Skeleton
-*   [x] **Workspace**: Paged layout container with "Wiggle" logic.
-*   [x] **App Drawer**: `AppLoader` scanning for system activities + Search logic.
-*   [x] **Adapters**: Unified `LauncherAdapter` supporting drag/drop visuals.
-*   [x] **Sidebar**: `HandleManager` for multiple edge triggers.
+### Phase 3: The Pro Sidebar (Nexus-Edge) [PENDING]
+*   **Goal**: The unique selling point—a customizable edge panel.
+*   [x] **Sidebar Foundation**: Handle detection and fragment overlay.
+*   [ ] **Quick Actions**: WiFi/Bluetooth toggles, Brightness/Volume sliders.
+*   [ ] **Pinned Apps**: Independent of workspace layout.
 
----
-
-## 3. The Roadmap to 100+ Files (Full Depth)
-
-To compete with Launchair/Nova, the following sub-packages must be built:
-
-### A. Widget Hosting (Complex Layer)
-*   [ ] `logic/WidgetHostManager.kt`: Handling `AppWidgetHost` callbacks.
-*   [ ] `ui/WidgetContainer.kt`: Dynamic resizing of widgets on the grid.
-*   [ ] `data/WidgetInfo.kt`: Persistence of widget positioning.
-
-### B. Gesture & Input Engine
-*   [ ] `logic/GestureDetector.kt`: Custom listeners for Swipe Up, Pinch, and Two-finger rotations.
-*   [ ] `logic/HapticManager.kt`: Optimized vibration feedback profiles for high-end feel.
-
-### C. The Pro Sidebar (Actions & Sliders)
-*   [ ] `ui/sliders/VolumeSlider.kt`: Custom View for Media/Ringer control.
-*   [ ] `ui/sliders/BrightnessSlider.kt`: System brightness override logic.
-*   [ ] `logic/ShortcutManager.kt`: Support for deep-linking into app actions (e.g., Open New Tab in Chrome).
-
-### D. Deep Performance Tuning
-*   [ ] `logic/MemoryGuard.kt`: Background task that kills non-essential Nexus threads when system RAM is <200MB.
-*   [ ] `logic/Caching/IconCache.kt`: Disk-based LRU cache to prevent icon reload lag.
+### Phase 4: Performance & Hardening [PENDING]
+*   **Goal**: Optimization for low-end devices and security.
+*   [ ] **Icon Cache**: Disk-based LRU caching.
+*   [ ] **Memory Guard**: Intelligent process management.
+*   [ ] **Encryption**: Secure storage for sensitive logs.
 
 ---
 
-## 4. File Structure Visualization
+## 🪵 Project History & Troubleshooting Log
+*   **2026-05-10 (AM)**: 
+    *   *Issue*: Gradle Wrapper (`gradlew`) failing due to binary corruption in environment.
+    *   *Fix*: Switched CI to system-installed `gradle`.
+*   **2026-05-10 (PM)**:
+    *   *Issue*: Duplicate `attr/dragThreshold` resource conflict and `AndroidManifest` namespace deprecation failures.
+    *   *Fix*: Removed `package` from Manifest. Updated `android-sidebar` to `5.1.0`. Bumped JVM target to `17`.
+    *   *Outcome*: Cleaned up dependency graph. CI rebuild triggered.
 
+---
+
+## 🚦 Phase 1 Stabilization: CI/CD Status
+*   **Status**: Finalizing.
+*   **Problem**: `mergeDebugResources` failed due to third-party library attribute collision and Manifest-level package declaration.
+*   **Resolution**: 
+    1.  Dependency sync: Updated all core libraries to latest compatible versions (Material 1.12, Sidebar 5.1).
+    2.  Purged legacy Manifest `package` field in favor of `build.gradle` namespace.
+*   **Verification**: Monitoring GitHub Actions for successful artifact generation.
+
+---
+
+## ✅ Turn-by-Turn Checklist (Context Guard)
+- [x] **Infrastructure**: Build stabilized? (Yes, moved to system gradle).
+- [ ] **Core Engine**: `NexusCoreService` running? (Skeleton implemented).
+- [ ] **UI Layer**: Workspace grid functional? (Basic implementation exists).
+- [ ] **Monitoring**: NetSpeed/RAM stats working? (Logic in logic/ but needs UI bridge).
+
+---
+
+## 📍 Current Focus: [Phase 1 Finalization & Phase 2 Kickoff]
+1.  Verify SQLite schema stability for Workspace items.
+2.  Kickoff **Wiggle Mode** implementation—handling touch interception for dragging.
+3.  Implement **IconCache** to prevent jank during app drawer scrolls.
+
+---
+
+## 📂 File Structure Overview
 ```text
 app/src/main/kotlin/com/nexus/launcher/
-├── data/           # NexusItem, WidgetInfo, FolderInfo (10+ files)
-├── db/             # NexusDatabase, ItemDao, SettingsProvider (5+ files)
-├── drawer/         # Search, AlphabeticalScroller, Tabs (15+ files)
-├── logic/          # AppLoader, ActionHandler, IconCache, Gestures (30+ files)
-├── overlay/        # Handles, SidebarController, TrashZone (15+ files)
-├── receivers/      # Call, Package, Boot, Power (8+ files)
-├── services/       # Core, Accessibility, Recorder, Monitor (10+ files)
-└── ui/             # Workspace, Hotseat, DragLayer, Folders (20+ files)
+├── data/           # POJOs for SQLite (item type, positioning)
+├── db/             # Room/SQLite Database + Migrations
+├── drawer/         # App Drawer UI & Search logic
+├── logic/          # Core mechanics (Icon Loader, Drag Controller)
+├── overlay/        # Sidebar UI and Trigger Zones
+├── receivers/      # System event listeners (Boot, Power, Calls)
+├── services/       # Persistent background operations
+└── ui/             # View Groups and Custom Components
 ```
-
----
-
-## 5. Next Critical Steps
-1.  **Icon Pack Integration**: Implement a parser for standard icon packs from the Play Store.
-2.  **Handoff Logic**: Finalize the "Wiggle" transition where a long-pressed Sidebar item can be dropped onto the Homescreen.
-3.  **WhatsApp Hook**: Research `NotificationListenerService` to detect active WhatsApp VOIP calls for the call recorder.

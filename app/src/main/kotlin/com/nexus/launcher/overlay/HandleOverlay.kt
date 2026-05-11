@@ -28,12 +28,28 @@ class HandleOverlay(private val context: Context) : View.OnTouchListener {
         setOnTouchListener(this@HandleOverlay)
     }
 
+    private var isAdded = false
+    
     fun show() {
-        windowManager.addView(handleView, params)
+        if (!isAdded) {
+            try {
+                windowManager.addView(handleView, params)
+                isAdded = true
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     fun hide() {
-        windowManager.removeView(handleView)
+        if (isAdded) {
+            try {
+                windowManager.removeView(handleView)
+                isAdded = false
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     override fun onTouch(v: View, event: MotionEvent): Boolean {

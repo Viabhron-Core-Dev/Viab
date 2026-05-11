@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import com.nexus.launcher.R
+import com.nexus.launcher.data.NexusItem
 
 /**
  * Hotseat: The dock area.

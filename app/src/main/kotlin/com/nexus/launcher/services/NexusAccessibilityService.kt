@@ -21,7 +21,11 @@ class NexusAccessibilityService : AccessibilityService() {
         intent?.action?.let { action ->
             when (action) {
                 ACTION_SCREENSHOT -> takeScreenshot()
-                ACTION_SLEEP -> performGlobalAction(GLOBAL_ACTION_LOCK_SCREEN)
+                ACTION_SLEEP -> {
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                        performGlobalAction(GLOBAL_ACTION_LOCK_SCREEN)
+                    }
+                }
                 ACTION_RECENTS -> performGlobalAction(GLOBAL_ACTION_RECENTS)
             }
         }
